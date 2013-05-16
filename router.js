@@ -18,6 +18,15 @@ var route = (function() {
         routes.push({ regexp: regexp, cb: cb });
     }
     
+    // Programmatically go a page.
+    // Supports extra arguments.
+    
+    route.go = function(page) {
+        var extra = Array.prototype.slice.call(arguments, 1);        
+        window.location.hash = '#' + page +
+            (extra.length > 0 ? '/' + extra.join('/') : '');
+    };
+    
     // Looks for matching routes. Picks first.
     
     function activate() {
