@@ -47,4 +47,10 @@ var route = (function() {
     window.addEventListener('hashchange', activate, false);
     
     return route;
-})(); 
+})();
+
+// CommonJS support.
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = route;
+}

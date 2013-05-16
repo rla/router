@@ -40,6 +40,19 @@ Programmatically go to a page:
 route.go('home');
 ```
 
+```javascript
+route.go('profile', 123);
+```
+
+Tests
+-----
+
+To run tests you need to install necessary dependencies (mocha and chai): `npm install`.
+Then open `tests/index.html` in the browser.
+
+To run tests with PhantomJS install the `mocha-phantomjs`
+[package](https://github.com/metaskills/mocha-phantomjs) and run `make test`.
+
 License
 -------
 
