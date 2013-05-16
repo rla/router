@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <style>
+        .hide { display: none; }
+    </style>
+    <body>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#profile/123">Profile 123</a></li>
+        </ul>
+        <div id="page-home">
+            <h1>Welcome</h1>
+            <p>This is router example.</p>
+        </div>
+        <div id="page-about" class="hide">
+            <h1>About the example</h1>
+            <p>This is the about page.</p>
+        </div>
+        <div id="page-profile" class="hide">
+            <h1>Profile: <span id="profile-id">0</span></h1>
+            <p>You are watching a profile.</p>
+            <a href="#profile/prev">Previous</a>
+            | <a href="#profile/next">Next</a>
+        </div>
+        <script src="../router.js"></script>
+        <script src="example.js"></script>
+    </body>
+</html>
