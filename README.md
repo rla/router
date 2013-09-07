@@ -44,6 +44,12 @@ route.go('home');
 route.go('profile', 123);
 ```
 
+Refresh the current route:
+
+```javascript
+route.refresh();
+```
+
 Tests
 -----
 
