@@ -1,8 +1,29 @@
 {
-    "name": "rla-router",
-    "version": "0.0.1",
-    "devDependencies": {
-        "mocha": "1.x",
-        "chai": "1.x"
-    }
+  "name": "hash-regex-router",
+  "version": "1.0.0",
+  "author": {
+    "name": "Raivo Laanemets",
+    "email": "info@rlaanemets.com"
+  },
+  "keywords": [
+    "router",
+    "frontend",
+    "hash",
+    "regex",
+    "hashchange"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/rla/router"
+  },
+  "license": "MIT",
+  "main": "router.js",
+  "devDependencies": {
+    "browserify": "^9.0.6",
+    "casperjs": "^1.1.0-beta3",
+    "http-server": "^0.8.0",
+    "jshint": "^2.6.3",
+    "phantomjs": "^1.9.16",
+    "uglifyify": "^3.0.1"
+  }
 }
