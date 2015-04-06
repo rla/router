@@ -1,15 +1,18 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
     <head>
-        <meta charset="utf-8">
+        <meta charset="UTF-8">
+        <title>Router example</title>
     </head>
     <style>
         .hide { display: none; }
     </style>
     <body>
-        <ul>
+        <ul id="menu">
             <li><a href="#home">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#profile/123">Profile 123</a></li>
+            <li><a href="#profile/123/edit">Edit Profile 123</a></li>
         </ul>
         <div id="page-home">
             <h1>Welcome</h1>
@@ -25,7 +28,12 @@
             <a href="#profile/prev">Previous</a>
             | <a href="#profile/next">Next</a>
         </div>
-        <script src="../router.js"></script>
+        <div id="page-profile-edit" class="hide">
+            <h1>Edit profile</h1>
+            <p>Here could be a form.</p>
+            <a href="#home">Home</a>
+        </div>
+        <script src="/dist/router-standalone.js"></script>
         <script src="example.js"></script>
     </body>
 </html>
