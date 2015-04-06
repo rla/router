@@ -1,68 +1,150 @@
 // Simplest hashchange router.
-// Chrome 5, Firefox 3.6, IE 8.
-// (c) Raivo Laanemets 2013
+// Chrome 5, Firefox 3.6, IE 9.
+// (c) Raivo Laanemets 2013-2015
 // MIT license.
 
-var route = (function() {
-    var routes = [];
+var routes = [];
 
-    // Sets up a route.
+// Sets up a route.
 
-    function route(regexp, cb) {
-        if (!(regexp instanceof RegExp)) {
-            throw new Error('Route must be a regexp.');
-        }
-        if (typeof cb !== 'function') {
-            throw new Error('Route handler must be a function.');
-        }
-        routes.push({ regexp: regexp, cb: cb });
+var route = module.exports = function(regexp, cb) {
+
+    if (!(regexp instanceof RegExp)) {
+
+        throw new Error('Route must be a regexp.');
     }
 
-    // Programmatically go a page.
-    // Supports extra arguments.
+    if (typeof cb !== 'function') {
 
-    route.go = function(page) {
-        var extra = Array.prototype.slice.call(arguments, 1);
-        window.location.hash = '#' + page +
-            (extra.length > 0 ? '/' + extra.join('/') : '');
-    };
-
-    // Needed for refresh.
-
-    var last = window.location.hash.substring(1);
-
-    // Looks for matching routes. Picks first.
-
-    function activate() {
-        var hash = window.location.hash.substring(1);
-        last = hash;
-        for (var i = 0; i < routes.length; i++) {
-            var route = routes[i];
-            var match = hash.match(route.regexp);
-            if (match) {
-                route.cb.apply(null, match.slice(1, match.length));
-                break;
-            }
-        }
+        throw new Error('Route handler must be a function.');
     }
 
-    // Refreshes the current location.
+    routes.push({ regexp: regexp, cb: cb });
+};
 
-    route.refresh = function() {
+// Programmatically go a page.
+// Supports extra arguments.
+
+route.go = function(page) {
+
+    var extra = Array.prototype.slice.call(arguments, 1);
+
+    window.location.hash = '#' + page +
+        (extra.length > 0 ? '/' + extra.join('/') : '');
+};
+
+// Needed for refresh.
+
+var last;
+
+// Looks for matching routes. Picks first.
+
+function dispatch() {
+
+    var hash = current();
+
+    // Only when hash actually changed from
+    // last activation and router is currently
+    // enabled.
+
+    if (last === hash || !enabled) {
+
+        return;
+    }
+
+    blocked = false;
+
+    if (typeof route.leave === 'function') {
+
+        blocked = !route.leave.call(route);
+    }
+
+    if (blocked) {
+
+        // Restore previous hash.
+
         window.location.hash = '#' + last;
-        activate();
-    };
+
+        return;
+
+    } else {
+
+        // Autoremove leave callback.
+
+        route.leave = null;
+    }
+
+    last = hash;
+
+    for (var i = 0; i < routes.length; i++) {
+
+        var entry = routes[i];
+
+        var match = hash.match(entry.regexp);
+
+        if (match) {
+
+            entry.cb.apply(null, match.slice(1, match.length));
+
+            break;
+        }
+    }
+}
+
+// Extracts current hash.
+
+function current() {
+
+    var match = location.href.match(/#(.+)$/);
+
+    return match ? match[1] : '';
+}
+
+// Refreshes the current location.
+
+route.refresh = function() {
+
+    dispatch();
+};
+
+// Flag against multiple enables.
+
+var enabled = false;
+
+// Enables event listeners.
+
+var enable = route.enable = function() {
+
+    if (enabled) {
+
+        return;
+    }
 
     // Sets up hash change and initial callbacks.
 
-    window.addEventListener('load', activate, false);
-    window.addEventListener('hashchange', activate, false);
+    window.addEventListener('load', dispatch, false);
+    window.addEventListener('hashchange', dispatch, false);
 
-    return route;
-})();
+    enabled = true;
+};
 
-// CommonJS support.
+// Disables event listeners.
 
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = route;
-}
+route.disable = function() {
+
+    if (!enabled) {
+
+        return;
+    }
+
+    // Removes listeners.
+
+    window.removeEventListener('load', dispatch, false);
+    window.removeEventListener('hashchange', dispatch, false);
+
+    enabled = false;
+};
+
+// Start with enabled listeners.
+
+enable();
