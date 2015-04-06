@@ -52,19 +52,19 @@ route.refresh();
 
 Disable routing:
 
-```
+```javascript
 route.disable();
 ```
 
 Re-enable routing:
 
-```
+```javascript
 route.enable();
 ```
 
 Prevent leaving current route:
 
-```
+```javascript
 route.leave = function() {
     return confirm('Leave the current route?');
 };
@@ -83,7 +83,9 @@ Installing from NPM:
 If installed through NPM then the module can be directly used in browserify by simply require()'ing
 it:
 
-    var route = require('router');
+```javascript
+var route = require('router');
+```
 
 ## Building/testing
 
