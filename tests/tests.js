@@ -1,94 +1,93 @@
-// Set up testing routes.
+casper.test.begin('Router', function suite(test) {
 
-var aboutCount = 0;
+    casper.start('http://localhost:9090/example/', function() {
 
-route(/^about/, function() {
-    aboutCount++;
-});
+        test.assertTitle('Router example');
 
-var profileCount = 0;
-var lastProfile = 0;
-
-route(/^profile\/([0-9]+)/, function(id) {
-    profileCount++;
-    lastProfile = parseInt(id, 10);
-});
-
-// The default route is
-// at the bottom.
-
-var defCount = 0;
-
-route(/.*/, function() {
-    defCount++;
-});
-
-// Test them.
-
-describe('Route', function() {
-    
-    it('should visit the default route at start', function() {
-        assert.equal(defCount, 1);
+        test.assertUrlMatch(/#home$/);
     });
-    
-    it('should not visit the about route at start', function() {
-        assert.equal(aboutCount, 0);
+
+    casper.thenClick('#menu li:nth-child(2) a');
+
+    casper.waitForUrl(/#about$/);
+
+    casper.then(function() {
+
+        test.assertSelectorHasText('#page-about p', 'This is the about page.');
     });
-    
-    it('should visit the about route when hash changes', function(done) {
-        var c = aboutCount;
-        window.location.hash = '#about';
-        setTimeout(function() {
-            assert.equal(aboutCount, c + 1);
-            done();
-        }, 10);        
+
+    casper.thenClick('#menu li:nth-child(3) a');
+
+    casper.waitForUrl(/#profile\/123$/);
+
+    casper.then(function() {
+
+        test.assertSelectorHasText('#page-profile p', 'You are watching a profile.');
     });
-    
-    it('should visit the default route when hash changes to non-existent route', function(done) {
-        var c = defCount;
-        window.location.hash = '#notexists';
-        setTimeout(function() {
-            assert.equal(defCount, c + 1);
-            done();
-        }, 10);
+
+    casper.thenClick('#page-profile a:nth-of-type(1)');
+
+    casper.waitForUrl(/#profile\/122$/);
+
+    casper.then(function() {
+
+        test.assertSelectorHasText('#page-profile p', 'You are watching a profile.');
     });
-    
-    it('should visit the about route when used programmatically', function(done) {
-        var c = aboutCount;
-        route.go('about');
-        setTimeout(function() {
-            assert.equal(aboutCount, c + 1);
-            done();
-        }, 10);
+
+    casper.thenOpen('http://localhost:9090/example/#profile\/125');
+
+    casper.waitForUrl(/#profile\/125$/);
+
+    casper.then(function() {
+
+        test.assertSelectorHasText('#page-profile p', 'You are watching a profile.');
     });
-    
-    it('should visit the profile route', function(done) {
-        var c = profileCount;
-        window.location.hash = '#profile/123';
-        setTimeout(function() {
-            assert.equal(profileCount, c + 1);
-            assert.equal(lastProfile, 123);
-            done();
-        }, 10);
+
+    casper.thenClick('#menu li:nth-child(4) a');
+
+    casper.waitForUrl(/#profile\/123\/edit$/);
+
+    casper.then(function() {
+
+        test.assertSelectorHasText('#page-profile-edit p', 'Here could be a form.');
     });
-    
-    it('should visit the profile route programmatically', function(done) {
-        var c = profileCount;
-        route.go('profile/321');
-        setTimeout(function() {
-            assert.equal(profileCount, c + 1);
-            assert.equal(lastProfile, 321);
-            done();
-        }, 10);
+
+    // Make confirmation dialog return false.
+
+    casper.removeAllFilters('page.confirm');
+
+    casper.setFilter('page.confirm', function(message) {
+
+        return false;
     });
-    
-    it('should visit the profile route programmatically with args', function(done) {
-        var c = profileCount;
-        route.go('profile', 231);
-        setTimeout(function() {
-            assert.equal(profileCount, c + 1);
-            assert.equal(lastProfile, 231);
-            done();
-        }, 10);
+
+    casper.thenClick('#menu li:nth-child(1) a');
+
+    casper.then(function() {
+
+        test.assertSelectorHasText('#page-profile-edit p', 'Here could be a form.');
+    });
+
+    // Make confirmation dialog return true.
+
+    casper.removeAllFilters('page.confirm');
+
+    casper.setFilter('page.confirm', function(message) {
+
+        return true;
+    });
+
+    casper.thenClick('#menu li:nth-child(2) a');
+
+    casper.waitForUrl(/#about$/);
+
+    casper.then(function() {
+
+        test.assertSelectorHasText('#page-about p', 'This is the about page.');
+    });
+
+    casper.run(function() {
+
+        test.done();
     });
 });
