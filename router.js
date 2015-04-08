@@ -47,7 +47,20 @@ function dispatch() {
     // last activation and router is currently
     // enabled.
 
-    if (last === hash || !enabled) {
+    if (last === hash) {
+
+        return;
+    }
+
+    dispatchHash(hash);
+}
+
+// Dispatches without requiring current
+// route to be new.
+
+function dispatchHash(hash) {
+
+    if (!enabled) {
 
         return;
     }
@@ -101,10 +114,11 @@ function current() {
 }
 
 // Refreshes the current location.
+// Requires router to be enabled.
 
 route.refresh = function() {
 
-    dispatch();
+    dispatchHash(current());
 };
 
 // Flag against multiple enables.
